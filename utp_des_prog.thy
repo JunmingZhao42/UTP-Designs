@@ -148,8 +148,8 @@ definition AlternateD_list :: "('\<alpha> pred \<times> ('\<alpha>, '\<beta>) de
   AlternateD {0..<length xs} (\<lambda> i. map fst xs ! i) (\<lambda> i. map snd xs ! i) P"
 
 adhoc_overloading
-  ualtern AlternateD and
-  ualtern_list AlternateD_list
+  ualtern == AlternateD and
+  ualtern_list == AlternateD_list
 
 nonterminal gcomm and gcomms
   
