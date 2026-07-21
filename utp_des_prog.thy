@@ -113,10 +113,6 @@ lemma lmapD_rel_aext_ndes [ndes_simp]:
 
 subsection \<open> Alternation \<close>
   
-consts
-  ualtern       :: "'a set \<Rightarrow> ('a \<Rightarrow> 'p) \<Rightarrow> ('a \<Rightarrow> 'r) \<Rightarrow> 'r \<Rightarrow> 'r"
-  ualtern_list  :: "('a \<times> 'r) list \<Rightarrow> 'r \<Rightarrow> 'r"
-  
 definition AlternateD :: "'a set \<Rightarrow> ('a \<Rightarrow> '\<alpha> pred) \<Rightarrow> ('a \<Rightarrow> ('\<alpha>, '\<beta>) des_rel) \<Rightarrow> ('\<alpha>, '\<beta>) des_rel \<Rightarrow> ('\<alpha>, '\<beta>) des_rel" where
 [pred, ndes_simp]:
 "AlternateD A g P Q = (\<Sqinter> i\<in>A. g(i) \<rightarrow>\<^sub>D P(i)) \<sqinter> ((\<forall> i\<in>\<guillemotleft>A\<guillemotright>. \<not> @(g(i)))\<^sub>e \<rightarrow>\<^sub>D Q)"
@@ -151,38 +147,9 @@ adhoc_overloading
   ualtern == AlternateD and
   ualtern_list == AlternateD_list
 
-nonterminal gcomm and gcomms
-  
-syntax
-  "_altind_els"   :: "pttrn \<Rightarrow> logic \<Rightarrow> logic \<Rightarrow> logic \<Rightarrow> logic \<Rightarrow> logic" ("if _\<in>_ \<bullet> _ \<rightarrow> _ else _ fi")
-  "_altind"       :: "pttrn \<Rightarrow> logic \<Rightarrow> logic \<Rightarrow> logic \<Rightarrow> logic" ("if _\<in>_ \<bullet> _ \<rightarrow> _ fi")
-  "_gcomm"        :: "logic \<Rightarrow> logic \<Rightarrow> gcomm" ("_ \<rightarrow> _" [60, 60] 61)
-  "_gcomm_nil"    :: "gcomm \<Rightarrow> gcomms" ("_")
-  "_gcomm_cons"   :: "gcomm \<Rightarrow> gcomms \<Rightarrow> gcomms" ("_ |/ _" [60, 61] 61)
-  "_gcomm_show"   :: "logic \<Rightarrow> logic"
-  "_altgcomm_els" :: "gcomms \<Rightarrow> logic \<Rightarrow> logic" ("if/ _ /else _ /fi")
-  "_altgcomm"     :: "gcomms \<Rightarrow> logic" ("if/ _ /fi")
-
-translations
-  "_altind_els x A g P Q" => "CONST ualtern A (\<lambda> x. g) (\<lambda> x. P) Q"
-  "_altind_els x A g P Q" <= "CONST ualtern A (\<lambda> x. g) (\<lambda> x'. P) Q"
-  "_altind x A g P" => "CONST ualtern A (\<lambda> x. g) (\<lambda> x. P) (CONST Orderings.top)"
-  "_altind x A g P" <= "CONST ualtern A (\<lambda> x. g) (\<lambda> x'. P) (CONST Orderings.top)"
-  "_altgcomm cs" => "CONST ualtern_list cs (CONST Orderings.top)"
-  "_altgcomm (_gcomm_show cs)" <= "CONST ualtern_list cs (CONST Orderings.top)"
-  "_altgcomm_els cs P" => "CONST ualtern_list cs P"
-  "_altgcomm_els (_gcomm_show cs) P" <= "CONST ualtern_list cs P"
-
-  "_gcomm g P" => "(g, P)"
-  "_gcomm g P" <= "_gcomm_show (g, P)"
-  "_gcomm_cons c cs" => "c # cs"
-  "_gcomm_cons (_gcomm_show c) (_gcomm_show (d # cs))" <= "_gcomm_show (c # d # cs)"
-  "_gcomm_nil c" => "[c]"
-  "_gcomm_nil (_gcomm_show c)" <= "_gcomm_show [c]"
-
 lemma AlternateD_H1_H3_closed [closure]: 
   assumes "\<And> i. i \<in> A \<Longrightarrow> P i is \<^bold>N" "Q is \<^bold>N"
-  shows "if i\<in>A \<bullet> g(i) \<rightarrow> P(i) else Q fi is \<^bold>N"
+  shows "if i\<in>A. g(i) \<rightarrow> P(i) else Q fi is \<^bold>N"
 proof (cases "A = {}")
   case True
   then show ?thesis
@@ -194,7 +161,7 @@ next
 qed
 
 lemma AltD_ndes_simp [ndes_simp]: 
-  "if i\<in>A \<bullet> g(i) \<rightarrow> (@(P\<^sub>1(i)) \<turnstile>\<^sub>n P\<^sub>2(i)) else Q\<^sub>1 \<turnstile>\<^sub>n Q\<^sub>2 fi 
+  "if i\<in>A. g(i) \<rightarrow> (@(P\<^sub>1(i)) \<turnstile>\<^sub>n P\<^sub>2(i)) else Q\<^sub>1 \<turnstile>\<^sub>n Q\<^sub>2 fi 
    = ((\<forall> i \<in> \<guillemotleft>A\<guillemotright>. @(g i) \<longrightarrow> @(P\<^sub>1 i)) \<and> ((\<forall> i \<in> \<guillemotleft>A\<guillemotright>. \<not> @(g i)) \<longrightarrow> Q\<^sub>1)) \<turnstile>\<^sub>n
      ((\<Sqinter> i \<in> A. (@(g i))\<^sup>< \<and> (P\<^sub>2 i)) \<or> (\<forall> i \<in> \<guillemotleft>A\<guillemotright>. \<not> @(g i)\<^sup><)\<^sub>e \<and> Q\<^sub>2)"
 proof (cases "A = {}")
