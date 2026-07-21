@@ -125,16 +125,22 @@ expr_constructor des_theory.utp_lfp des_theory.utp_gfp
   ndes_theory.utp_lfp ndes_theory.utp_gfp
 
 syntax
-  "_dmu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<mu>\<^sub>D _ \<bullet> _" [0, 10] 10)
-  "_dnu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<nu>\<^sub>D _ \<bullet> _" [0, 10] 10)
-  "_ndmu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<mu>\<^sub>N _ \<bullet> _" [0, 10] 10)
-  "_ndnu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<nu>\<^sub>N _ \<bullet> _" [0, 10] 10)
+  "_dmu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<mu>\<^sub>D _/. _" [0, 10] 10)
+  "_dnu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<nu>\<^sub>D _/. _" [0, 10] 10)
+  "_ndmu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<mu>\<^sub>N _/. _" [0, 10] 10)
+  "_ndnu" :: "pttrn \<Rightarrow> logic \<Rightarrow> logic" ("\<nu>\<^sub>N _/. _" [0, 10] 10)
 
 translations
-  "\<mu>\<^sub>D X \<bullet> P" == "\<mu>\<^sub>D (\<lambda> X. P)"
-  "\<nu>\<^sub>D X \<bullet> P" == "\<nu>\<^sub>D (\<lambda> X. P)"
-  "\<mu>\<^sub>N X \<bullet> P" == "\<mu>\<^sub>N (\<lambda> X. P)"
-  "\<nu>\<^sub>N X \<bullet> P" == "\<nu>\<^sub>N (\<lambda> X. P)"
+  "\<mu>\<^sub>D X. P" == "\<mu>\<^sub>D (\<lambda> X. P)"
+  "\<nu>\<^sub>D X. P" == "\<nu>\<^sub>D (\<lambda> X. P)"
+  "\<mu>\<^sub>N X. P" == "\<mu>\<^sub>N (\<lambda> X. P)"
+  "\<nu>\<^sub>N X. P" == "\<nu>\<^sub>N (\<lambda> X. P)"
+
+syntax_consts
+  "_dmu" \<rightleftharpoons> "des_theory.utp_lfp" and
+  "_dnu" \<rightleftharpoons> "des_theory.utp_gfp" and
+  "_ndmu" \<rightleftharpoons> "ndes_theory.utp_lfp" and
+  "_ndnu" \<rightleftharpoons> "ndes_theory.utp_gfp"
 
 thm des_theory.LFP_unfold
 thm des_theory.GFP_unfold
