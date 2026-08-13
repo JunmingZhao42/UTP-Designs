@@ -43,6 +43,12 @@ lemma H1_disj: "H1(P \<or> Q) = (H1(P) \<or> H1(Q))"
 lemma design_export_H1: "(P \<turnstile> Q) = (P \<turnstile> H1(Q))"
   by (pred_auto)
 
+lemma preD_H1: "pre\<^sub>D (H1 P) = pre\<^sub>D P"
+  by (simp add: H1_def pre_design_def, pred_simp)
+
+lemma postD_H1: "post\<^sub>D (H1 P) = post\<^sub>D P"
+  by (simp add: H1_def post_design_def, pred_simp)
+
 text \<open> The H1 algebraic laws are valid only when $\alpha(R)$ is homogeneous. This should maybe be
         generalised. \<close>
 
@@ -228,6 +234,13 @@ qed
 lemma H2_split:
   shows "H2(P) = (P\<^sup>f \<or> (P\<^sup>t \<and> ok\<^sup>>))"
   by (simp add: H2_def J_split)
+
+lemma preD_H2: "pre\<^sub>D (H2 P) = pre\<^sub>D P"
+  by (simp add: H2_split pre_design_def, pred_simp)
+
+lemma postD_H2:
+  "post\<^sub>D (H2 P) = ((\<not> pre\<^sub>D P) \<or> post\<^sub>D P)"
+  by (simp add: H2_split pre_design_def post_design_def, pred_simp)
 
 theorem H2_equivalence:
   "P is H2 \<longleftrightarrow> `(P\<^sup>f \<longrightarrow> P\<^sup>t)`"

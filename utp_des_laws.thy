@@ -54,6 +54,10 @@ lemma ok_post: "(ok\<^sup>< \<and> post\<^sub>D(P) \<up> more\<^sub>L\<^sup>2) =
   
 subsection \<open> Basic Design Laws \<close>
 
+lemma design_as_disj:
+  "(P \<turnstile> Q) = ((\<not> ok\<^sup><) \<or> (\<not> P) \<or> (Q \<and> ok\<^sup>>))"
+  by (simp add: design_def fun_eq_iff; pred_auto)
+
 lemma design_export_ok: "(P \<turnstile> Q) = (P \<turnstile> (ok\<^sup>< \<and> Q))"
   by (pred_auto)
 
@@ -113,6 +117,31 @@ lemma design_subst_ok_ok':
 lemma design_subst_ok':
   "(P \<turnstile> Q\<lbrakk>True/ok\<^sup>>\<rbrakk>) = (P \<turnstile> Q)"
   by pred_auto
+
+lemma design_ok_in_cong:
+  assumes "P1\<lbrakk>True/ok\<^sup><\<rbrakk> = P2\<lbrakk>True/ok\<^sup><\<rbrakk>"
+    and "Q1\<lbrakk>True/ok\<^sup><\<rbrakk> = Q2\<lbrakk>True/ok\<^sup><\<rbrakk>"
+  shows "(P1 \<turnstile> Q1) = (P2 \<turnstile> Q2)"
+  using arg_cong2[where f=design, OF assms]
+  by (simp only: design_subst_ok)
+
+lemma design_ok_out_true_subst:
+  assumes "$ok\<^sup>> \<sharp> P" "$ok\<^sup>> \<sharp> Q"
+  shows "(P \<turnstile> Q)\<lbrakk>True/ok\<^sup>>\<rbrakk> = ((\<not> ok\<^sup><) \<or> (\<not> P) \<or> Q)"
+  using assms
+  by (simp add: design_def usubst usubst_eval; pred_auto)
+
+lemma design_ok_out_false_subst:
+  assumes "$ok\<^sup>> \<sharp> P"
+  shows "(P \<turnstile> Q)\<lbrakk>False/ok\<^sup>>\<rbrakk> = ((\<not> ok\<^sup><) \<or> (\<not> P))"
+  using assms
+  by (simp add: design_def usubst usubst_eval; pred_auto)
+
+lemma design_ok_in_true_subst:
+  assumes "$ok\<^sup>< \<sharp> P" "$ok\<^sup>< \<sharp> Q"
+  shows "(P \<turnstile> Q)\<lbrakk>True/ok\<^sup><\<rbrakk> = ((\<not> P) \<or> (Q \<and> ok\<^sup>>))"
+  using assms
+  by (simp add: design_def usubst usubst_eval; pred_auto)
 
 subsection \<open> Sequential Composition Laws \<close>
 
@@ -290,6 +319,14 @@ lemma preD_USUP_mem: "pre\<^sub>D (\<Squnion> i\<in>A.  P i) = (\<Sqinter> i\<in
 lemma preD_USUP_ind: "pre\<^sub>D (\<Squnion> i. P i) = (\<Sqinter> i. pre\<^sub>D(P i))"
   by (pred_auto)
 
+lemma preD_disj:
+  "pre\<^sub>D (P \<or> Q) = (pre\<^sub>D P \<and> pre\<^sub>D Q)"
+  by (simp add: pre_design_def, pred_simp)
+
+lemma postD_disj:
+  "post\<^sub>D (P \<or> Q) = (post\<^sub>D P \<or> post\<^sub>D Q)"
+  by (simp add: post_design_def, pred_simp)
+
 subsection \<open> Distribution Laws \<close>
 
 theorem design_choice:
@@ -299,6 +336,10 @@ theorem design_choice:
 theorem rdesign_choice:
   "(P\<^sub>1 \<turnstile>\<^sub>r P\<^sub>2) \<sqinter> (Q\<^sub>1 \<turnstile>\<^sub>r Q\<^sub>2) = ((P\<^sub>1 \<and> Q\<^sub>1) \<turnstile>\<^sub>r (P\<^sub>2 \<or> Q\<^sub>2))"
   by (pred_auto)
+
+theorem rdesign_choice':
+  "((P\<^sub>1 \<turnstile>\<^sub>r P\<^sub>2) \<or> (Q\<^sub>1 \<turnstile>\<^sub>r Q\<^sub>2)) = ((P\<^sub>1 \<and> Q\<^sub>1) \<turnstile>\<^sub>r (P\<^sub>2 \<or> Q\<^sub>2))"
+  by (simp add: rdesign_def design_union, pred_simp)
 
 theorem ndesign_choice [ndes_simp]:
   "(p\<^sub>1 \<turnstile>\<^sub>n P\<^sub>2) \<sqinter> (q\<^sub>1 \<turnstile>\<^sub>n Q\<^sub>2) = ((p\<^sub>1 \<and> q\<^sub>1) \<turnstile>\<^sub>n (P\<^sub>2 \<or> Q\<^sub>2))"
@@ -393,6 +434,11 @@ lemma rdesign_refine_intro':
   assumes "P2 \<sqsubseteq> P1" "Q1 \<sqsubseteq> (P1 \<and> Q2)"
   shows "P1 \<turnstile>\<^sub>r Q1 \<sqsubseteq> P2 \<turnstile>\<^sub>r Q2"
   using assms by (pred_auto)
+
+lemma design_pre_weaken:
+  assumes "P2 \<sqsubseteq> P1"
+  shows "(P1 \<turnstile> Q) \<sqsubseteq> (P2 \<turnstile> Q)"
+  by (rule design_refine_intro'[OF assms]; pred_auto)
 
 lemma ndesign_refinement: 
   "p1 \<turnstile>\<^sub>n Q1 \<sqsubseteq> p2 \<turnstile>\<^sub>n Q2 \<longleftrightarrow> (`p1 \<longrightarrow> p2` \<and> `p1\<^sup>< \<and> Q2 \<longrightarrow> Q1`)"
