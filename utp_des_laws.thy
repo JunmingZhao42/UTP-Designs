@@ -73,6 +73,19 @@ lemma design_export_spec: "P \<turnstile> (P \<longrightarrow> Q)\<^sub>e = P \<
 lemma design_ok_pre_conj: "(ok\<^sup>< \<and> P) \<turnstile> Q = P \<turnstile> Q"
   by (pred_auto)
 
+lemma design_true_conj:
+  "((true \<turnstile> Q) \<and> ((\<not> F) \<turnstile> T)) =
+   (true \<turnstile> (Q \<and> (F \<or> T)))"
+  by (pred_auto)
+
+lemma design_true_conj':
+  "((true \<turnstile> Q) \<and> (true \<turnstile> T)) = (true \<turnstile> (Q \<and> T))"
+  by (pred_auto)
+
+lemma design_post_absorb:
+  "(R \<and> (X \<and> Y)) = (X \<and> Y) \<Longrightarrow> (X \<turnstile> (Y \<and> R)) = (X \<turnstile> Y)"
+  by (simp add: design_def fun_eq_iff; pred_auto; blast)
+
 lemma true_is_design: "(false \<turnstile> true) = true"
   by (pred_auto)
 
