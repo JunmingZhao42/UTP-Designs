@@ -396,19 +396,11 @@ lemma H1_H2_refines:
 lemma H1_H2_idempotent: "\<^bold>H (\<^bold>H P) = \<^bold>H P"
   by (simp add: H1_H2_commute H1_idem H2_idem)
 
-lemma H_implies_H1:
-  assumes "P is \<^bold>H"
-  shows "P is H1"
-  apply (simp only: Healthy_def')
-  apply (subst (1 2) Healthy_if[OF assms, symmetric])
-  by (simp only: H1_idem)
+lemma H_implies_H1: "P is \<^bold>H \<Longrightarrow> P is H1"
+  by (simp only: Healthy_def, erule subst, simp only: H1_idem)
 
-lemma H_implies_H2:
-  assumes "P is \<^bold>H"
-  shows "P is H2"
-  apply (simp only: Healthy_def')
-  apply (subst (1 2) Healthy_if[OF assms, symmetric])
-  by (simp only: H1_H2_commute H2_idem)
+lemma H_implies_H2: "P is \<^bold>H \<Longrightarrow> P is H2"
+  by (simp only: Healthy_def, erule subst, simp only: H1_H2_commute H2_idem)
 
 lemma H1_H2_Idempotent [closure]: "Idempotent \<^bold>H"
   by (simp add: Idempotent_def H1_H2_idempotent)
@@ -740,10 +732,8 @@ lemma H1_H3_bot_left: "P is \<^bold>N \<Longrightarrow> \<bottom>\<^sub>D ;; P =
 lemma H1_H3_impl_H2 [closure]: "P is \<^bold>N \<Longrightarrow> P is \<^bold>H"
   by (metis H1_H2_commute H1_idem H2_H3_absorb Healthy_def')
 
-lemma N_implies_H:
-  assumes "P is \<^bold>N"
-  shows "P is \<^bold>H"
-  by (rule H1_H3_impl_H2[OF assms])
+lemma N_implies_H: "P is \<^bold>N \<Longrightarrow> P is \<^bold>H"
+  by (fact H1_H3_impl_H2)
 
 lemma H1_H3_eq_design_d_comp: "\<^bold>N(P) = ((\<not> P\<^sup>f) \<turnstile> P\<^sup>t) ;; II\<^sub>D"
   by (metis H1_H2_eq_design H1_H3_commute H3_H2_absorb H3_def)

@@ -56,7 +56,7 @@ subsection \<open> Basic Design Laws \<close>
 
 lemma design_as_disj:
   "(P \<turnstile> Q) = ((\<not> ok\<^sup><) \<or> (\<not> P) \<or> (Q \<and> ok\<^sup>>))"
-  by (simp add: design_def fun_eq_iff; pred_auto)
+  by pred_auto
 
 lemma design_export_ok: "(P \<turnstile> Q) = (P \<turnstile> (ok\<^sup>< \<and> Q))"
   by (pred_auto)
@@ -73,18 +73,18 @@ lemma design_export_spec: "P \<turnstile> (P \<longrightarrow> Q)\<^sub>e = P \<
 lemma design_ok_pre_conj: "(ok\<^sup>< \<and> P) \<turnstile> Q = P \<turnstile> Q"
   by (pred_auto)
 
-lemma design_true_conj:
+lemma design_true_conj_gen:
   "((true \<turnstile> Q) \<and> ((\<not> F) \<turnstile> T)) =
    (true \<turnstile> (Q \<and> (F \<or> T)))"
   by (pred_auto)
 
-lemma design_true_conj':
+lemma design_true_conj:
   "((true \<turnstile> Q) \<and> (true \<turnstile> T)) = (true \<turnstile> (Q \<and> T))"
   by (pred_auto)
 
 lemma design_post_absorb:
   "(R \<and> (X \<and> Y)) = (X \<and> Y) \<Longrightarrow> (X \<turnstile> (Y \<and> R)) = (X \<turnstile> Y)"
-  by (simp add: design_def fun_eq_iff; pred_auto; blast)
+  by (pred_auto; blast)
 
 lemma true_is_design: "(false \<turnstile> true) = true"
   by (pred_auto)
@@ -352,7 +352,7 @@ theorem rdesign_choice:
 
 theorem rdesign_choice':
   "((P\<^sub>1 \<turnstile>\<^sub>r P\<^sub>2) \<or> (Q\<^sub>1 \<turnstile>\<^sub>r Q\<^sub>2)) = ((P\<^sub>1 \<and> Q\<^sub>1) \<turnstile>\<^sub>r (P\<^sub>2 \<or> Q\<^sub>2))"
-  by (simp add: rdesign_def design_union, pred_simp)
+  by (fact rdesign_choice[folded disj_pred_def])
 
 theorem ndesign_choice [ndes_simp]:
   "(p\<^sub>1 \<turnstile>\<^sub>n P\<^sub>2) \<sqinter> (q\<^sub>1 \<turnstile>\<^sub>n Q\<^sub>2) = ((p\<^sub>1 \<and> q\<^sub>1) \<turnstile>\<^sub>n (P\<^sub>2 \<or> Q\<^sub>2))"
