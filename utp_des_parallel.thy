@@ -25,7 +25,12 @@ text \<open> $H2m$ applies $H2$ to the merge result by composing the merge with 
 definition H2m :: "'s des_merge \<Rightarrow> 's des_merge" where
 [pred]: "H2m M = M ;; J"
 
-text \<open> $HDM$ combines both conditions. \<close>
+text \<open> $H3m$ is right-composition with design skip on the merge alphabet. \<close>
+
+definition H3m :: "'s des_merge \<Rightarrow> 's des_merge" where
+[pred]: "H3m M \<equiv> M ;; II\<^sub>D"
+
+text \<open> $HDM$ combines $H1m$ and $H2m$. \<close>
 
 definition HDM :: "'s des_merge \<Rightarrow> 's des_merge" where
 [pred]: "HDM = H1m \<circ> H2m"
@@ -37,6 +42,18 @@ lemma H1m_idem: "H1m(H1m M) = H1m M"
 
 lemma H2m_idem: "H2m(H2m M) = H2m M"
   by (simp add: H2m_def seqr_assoc J_idem)
+
+lemma H3m_idem: "H3m(H3m M) = H3m M"
+  by (simp add: H3m_def seqr_assoc)
+
+lemma H3m_Idempotent [closure]: "Idempotent H3m"
+  by (simp add: Idempotent_def H3m_idem)
+
+lemma H3m_mono: "M \<sqsubseteq> N \<Longrightarrow> H3m M \<sqsubseteq> H3m N"
+  by (simp add: H3m_def seqr_mono)
+
+lemma H3m_Monotonic [closure]: "Monotonic H3m"
+  by (rule MonotonicI, rule H3m_mono)
 
 lemma H1m_H2m_commute:
   "(H1m \<circ> H2m) M = (H2m \<circ> H1m) M"
@@ -231,13 +248,20 @@ lemma H2_par_by_merge [closure]:
   using assms
   by (simp add: Healthy_def' H2_def H2m_def par_by_merge_def seqr_assoc)
 
+lemma H3_par_by_merge [closure]:
+  fixes P Q :: "'s des_hrel" and M :: "'s des_merge"
+  assumes "M is H3m"
+  shows "(P \<parallel>\<^bsub>M\<^esub> Q) is H3"
+  using assms
+  by (simp add: Healthy_def' H3_def H3m_def par_by_merge_seq_add)
+
 lemma H_par_by_merge [closure]:
   fixes P Q :: "'s des_hrel" and M :: "'s des_merge"
-  assumes "P is \<^bold>H" "Q is \<^bold>H" "M is HDM"
+  assumes "P is H1" "Q is H1" "M is HDM"
   shows "(P \<parallel>\<^bsub>M\<^esub> Q) is \<^bold>H"
   by (rule Healthy_intro;
       simp add: Healthy_if H1_par_by_merge H2_par_by_merge
-        H_implies_H1 HDM_healths assms)
+        HDM_healths assms)
 
 subsection \<open> Lifting a State Merge \<close>
 
@@ -271,6 +295,9 @@ lemma merge_des_alt_def: "merge_des j = H1m (merge_des_raw j) ;; II\<^sub>D"
 lemma merge_des_is_HDM [closure]: "M\<^sub>D(j) is HDM"
   unfolding merge_des_alt_def
   by (rule HDM_seq[OF _ N_implies_H[OF skip_d_is_H1_H3]]; simp add: Healthy_def' H1m_idem)
+
+lemma merge_des_is_H3m [closure]: "merge_des j is H3m"
+  by (simp add: Healthy_def' H3m_def merge_des_def seqr_assoc)
 
 text \<open> A symmetric state merge lifts to a symmetric design merge. \<close>
 
@@ -350,9 +377,19 @@ proof -
 qed
 
 lemma des_par_H_closure [closure]:
-  assumes "P is \<^bold>H" "Q is \<^bold>H"
+  assumes "P is H1" "Q is H1"
   shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) is \<^bold>H"
   by (rule H_par_by_merge[OF assms merge_des_is_HDM])
+
+lemma des_par_H3_closure [closure]:
+  "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) is H3"
+  by (rule H3_par_by_merge[OF merge_des_is_H3m])
+
+lemma des_par_N_closure [closure]:
+  assumes "P is H1" "Q is H1"
+  shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) is \<^bold>N"
+  by (simp add: Healthy_def' Healthy_if[OF des_par_H3_closure]
+      Healthy_if[OF H1_par_by_merge[OF assms HDM_healths(1)[OF merge_des_is_HDM]]])
 
 subsection \<open> Divergence, Chaos, and Miracle \<close>
 
