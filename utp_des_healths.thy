@@ -847,4 +847,16 @@ lemma is_H4_alt_def:
   "P is H4 \<longleftrightarrow> (P ;; true) = true"
   by (pred_auto, blast)
 
+subsection \<open> Non-Divergent Designs \<close>
+
+(* NDD P = P \<and> (ok \<longrightarrow> ok'). *)
+definition NDD :: "('\<alpha>, '\<beta>) des_rel \<Rightarrow> ('\<alpha>, '\<beta>) des_rel" where
+[pred]: "NDD P \<equiv> P \<squnion> (true \<turnstile> true)"
+
+lemma NDD_healthy_iff:
+  "P is NDD \<longleftrightarrow> pre\<^sub>D P = true"
+  apply (subst preD_true_iff)
+  unfolding Healthy_def' NDD_def conj_pred_def design_def
+  by pred_auto
+
 end

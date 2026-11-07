@@ -31,12 +31,12 @@ definition H3m ::
   "(('a, 'b, 'c) mrg, 'd des_vars_scheme) urel \<Rightarrow> (('a, 'b, 'c) mrg, 'd des_vars_scheme) urel"
 where [pred]: "H3m M \<equiv> M ;; II\<^sub>D"
 
-text \<open> $HDM$ combines $H1m$ and $H2m$. \<close>
+text \<open> $HDm$ combines $H1m$ and $H2m$. \<close>
 
-definition HDM ::
+definition HDm ::
   "(('a des_vars_scheme, 'b, 'c) mrg, 'd des_vars_scheme) urel
    \<Rightarrow> (('a des_vars_scheme, 'b, 'c) mrg, 'd des_vars_scheme) urel"
-where [pred]: "HDM = H1m \<circ> H2m"
+where [pred]: "HDm \<equiv> H1m \<circ> H2m"
 
 subsubsection \<open> Idempotence and Monotonicity \<close>
 
@@ -55,8 +55,8 @@ lemma H1m_H2m_commute:
 
 lemmas H1m_H2m_commute' = H1m_H2m_commute[simplified comp_apply]
 
-lemma HDM_idem: "HDM(HDM M) = HDM M"
-  by (simp add: HDM_def H1m_H2m_commute' H1m_idem H2m_idem)
+lemma HDm_idem: "HDm(HDm M) = HDm M"
+  by (simp add: HDm_def H1m_H2m_commute' H1m_idem H2m_idem)
 
 lemma H1m_Idempotent [closure]: "Idempotent H1m"
   by (simp add: Idempotent_def H1m_idem)
@@ -67,8 +67,8 @@ lemma H2m_Idempotent [closure]: "Idempotent H2m"
 lemma H3m_Idempotent [closure]: "Idempotent H3m"
   by (simp add: Idempotent_def H3m_idem)
 
-lemma HDM_Idempotent [closure]: "Idempotent HDM"
-  by (simp add: Idempotent_def HDM_idem)
+lemma HDm_Idempotent [closure]: "Idempotent HDm"
+  by (simp add: Idempotent_def HDm_idem)
 
 lemma H1m_mono: "M \<sqsubseteq> N \<Longrightarrow> H1m M \<sqsubseteq> H1m N"
   by pred_auto
@@ -79,8 +79,8 @@ lemma H2m_mono: "M \<sqsubseteq> N \<Longrightarrow> H2m M \<sqsubseteq> H2m N"
 lemma H3m_mono: "M \<sqsubseteq> N \<Longrightarrow> H3m M \<sqsubseteq> H3m N"
   by (simp add: H3m_def seqr_mono)
 
-lemma HDM_mono: "M \<sqsubseteq> N \<Longrightarrow> HDM M \<sqsubseteq> HDM N"
-  by (simp add: HDM_def H1m_mono H2m_mono)
+lemma HDm_mono: "M \<sqsubseteq> N \<Longrightarrow> HDm M \<sqsubseteq> HDm N"
+  by (simp add: HDm_def H1m_mono H2m_mono)
 
 lemma H1m_Monotonic [closure]: "Monotonic H1m"
   by (rule MonotonicI, rule H1m_mono)
@@ -91,23 +91,23 @@ lemma H2m_Monotonic [closure]: "Monotonic H2m"
 lemma H3m_Monotonic [closure]: "Monotonic H3m"
   by (rule MonotonicI, rule H3m_mono)
 
-lemma HDM_Monotonic [closure]: "Monotonic HDM"
-  by (rule MonotonicI, rule HDM_mono)
+lemma HDm_Monotonic [closure]: "Monotonic HDm"
+  by (rule MonotonicI, rule HDm_mono)
 
-lemma HDM_fixed_iff:
-  "M is HDM \<longleftrightarrow> (M is H1m) \<and> (M is H2m)"
+lemma HDm_fixed_iff:
+  "M is HDm \<longleftrightarrow> (M is H1m) \<and> (M is H2m)"
   using H1m_idem[of "H2m M"] H1m_H2m_commute'[of "H2m M"]
-  by (auto simp add: Healthy_def' HDM_def H2m_idem)
+  by (auto simp add: Healthy_def' HDm_def H2m_idem)
 
-lemma HDM_healths [closure]:
-  assumes "M is HDM"
+lemma HDm_healths [closure]:
+  assumes "M is HDm"
   shows "M is H1m" "M is H2m"
-  using assms by (simp_all add: HDM_fixed_iff)
+  using assms by (simp_all add: HDm_fixed_iff)
 
-lemma HDM_intro:
+lemma HDm_intro:
   assumes "M is H1m" "M is H2m"
-  shows "M is HDM"
-  by (simp add: HDM_fixed_iff assms)
+  shows "M is HDm"
+  by (simp add: HDm_fixed_iff assms)
 
 subsubsection \<open> Commutation \<close>
 
@@ -119,15 +119,15 @@ lemma H2m_H3m_commute:
   "H2m (H3m M) = H3m (H2m M)"
   by (simp add: H2m_def H3m_def seqr_assoc skip_d_absorb_J_1 skip_d_absorb_J_2)
 
-lemma H1m_HDM_commute:
-  "H1m (HDM M) = HDM (H1m M)"
-  by (simp add: HDM_def H1m_H2m_commute' H1m_idem)
-lemma H2m_HDM_commute:
-  "H2m (HDM M) = HDM (H2m M)"
-  by (simp add: HDM_def H1m_H2m_commute' H2m_idem)
-lemma H3m_HDM_commute:
-  "H3m (HDM M) = HDM (H3m M)"
-  by (simp add: HDM_def H1m_H3m_commute H2m_H3m_commute)
+lemma H1m_HDm_commute:
+  "H1m (HDm M) = HDm (H1m M)"
+  by (simp add: HDm_def H1m_H2m_commute' H1m_idem)
+lemma H2m_HDm_commute:
+  "H2m (HDm M) = HDm (H2m M)"
+  by (simp add: HDm_def H1m_H2m_commute' H2m_idem)
+lemma H3m_HDm_commute:
+  "H3m (HDm M) = HDm (H3m M)"
+  by (simp add: HDm_def H1m_H3m_commute H2m_H3m_commute)
 
 subsubsection \<open> Disjunction and Conjunction \<close>
 
@@ -140,10 +140,10 @@ lemma H1m_conj: "H1m(M \<and> N) = (H1m M \<and> H1m N)"
 lemma H2m_disj: "H2m(M \<or> N) = (H2m M \<or> H2m N)"
   by (simp add: H2m_def seqr_or_distl)
 
-lemma HDM_disj: "HDM(M \<or> N) = (HDM M \<or> HDM N)"
-  by (simp add: HDM_def H1m_disj H2m_disj)
+lemma HDm_disj: "HDm(M \<or> N) = (HDm M \<or> HDm N)"
+  by (simp add: HDm_def H1m_disj H2m_disj)
 
-text \<open> H2m and HDM distribute over conjunction for H2m-healthy operands, but not in general. \<close>
+text \<open> H2m and HDm distribute over conjunction for H2m-healthy operands, but not in general. \<close>
 
 lemma H2m_conj:
   assumes "M is H2m" "N is H2m"
@@ -155,10 +155,10 @@ proof -
     by (simp only: Healthy_if[OF assms(1)] Healthy_if[OF assms(2)])
 qed
 
-lemma HDM_conj:
+lemma HDm_conj:
   assumes "M is H2m" "N is H2m"
-  shows "HDM(M \<and> N) = (HDM M \<and> HDM N)"
-  by (simp add: HDM_def H2m_conj assms H1m_conj)
+  shows "HDm(M \<and> N) = (HDm M \<and> HDm N)"
+  by (simp add: HDm_def H2m_conj assms H1m_conj)
 
 lemma H2m_not_conj_distrib:
   "\<not> (\<forall> M N :: 's des_merge. H2m(M \<and> N) = (H2m M \<and> H2m N))"
@@ -169,11 +169,11 @@ proof -
   then show ?thesis by blast
 qed
 
-lemma HDM_not_conj_distrib:
-  "\<not> (\<forall> M N :: 's des_merge. HDM(M \<and> N) = (HDM M \<and> HDM N))"
+lemma HDm_not_conj_distrib:
+  "\<not> (\<forall> M N :: 's des_merge. HDm(M \<and> N) = (HDm M \<and> HDm N))"
 proof -
-  have "HDM(ok\<^sup>> \<and> \<not> ok\<^sup>>) \<noteq>
-    (HDM(ok\<^sup>>) \<and> HDM(\<not> ok\<^sup>>) :: 's des_merge)"
+  have "HDm(ok\<^sup>> \<and> \<not> ok\<^sup>>) \<noteq>
+    (HDm(ok\<^sup>>) \<and> HDm(\<not> ok\<^sup>>) :: 's des_merge)"
     by pred_auto
   then show ?thesis by blast
 qed
@@ -198,15 +198,15 @@ lemma H2m_conj_closed [closure]:
   shows "(M \<and> N) is H2m"
   by (rule Healthy_intro; simp add: H2m_conj Healthy_if assms)
 
-lemma HDM_disj_closed [closure]:
-  assumes "M is HDM" "N is HDM"
-  shows "(M \<or> N) is HDM"
-  by (rule Healthy_intro; simp add: HDM_disj Healthy_if assms)
+lemma HDm_disj_closed [closure]:
+  assumes "M is HDm" "N is HDm"
+  shows "(M \<or> N) is HDm"
+  by (rule Healthy_intro; simp add: HDm_disj Healthy_if assms)
 
-lemma HDM_conj_closed [closure]:
-  assumes "M is HDM" "N is HDM"
-  shows "(M \<and> N) is HDM"
-  by (rule HDM_intro; simp add: assms closure)
+lemma HDm_conj_closed [closure]:
+  assumes "M is HDm" "N is HDm"
+  shows "(M \<and> N) is HDm"
+  by (rule HDm_intro; simp add: assms closure)
 
 subsubsection \<open> Symmetry \<close>
 
@@ -220,10 +220,10 @@ lemma SymMerge_H2m [closure]:
   shows "H2m M is SymMerge"
   using assms by (simp add: Healthy_def' H2m_def seqr_assoc[symmetric])
 
-lemma SymMerge_HDM [closure]:
+lemma SymMerge_HDm [closure]:
   assumes "M is SymMerge"
-  shows "HDM M is SymMerge"
-  by (simp add: HDM_def assms closure)
+  shows "HDm M is SymMerge"
+  by (simp add: HDm_def assms closure)
 
 subsubsection \<open> Sequential Composition \<close>
 
@@ -237,10 +237,10 @@ lemma H2m_seq [closure]:
   shows "M ;; P is H2m"
   using assms by (simp add: Healthy_def' H2m_def H2_def seqr_assoc)
 
-lemma HDM_seq [closure]:
+lemma HDm_seq [closure]:
   assumes "M is H1m" "P is \<^bold>H"
-  shows "M ;; P is HDM"
-  by (rule HDM_intro;
+  shows "M ;; P is HDm"
+  by (rule HDm_intro;
       simp add: assms closure H_implies_H1 H_implies_H2)
 
 subsection \<open> Generic Design Parallel Laws \<close>
@@ -282,11 +282,11 @@ lemma H3_par_by_merge [closure]:
 lemma H_par_by_merge [closure]:
   fixes P :: "('a, 'b) des_rel" and Q :: "('a, 'c) des_rel"
     and M :: "(('a des_vars_scheme, 'b des_vars_scheme, 'c des_vars_scheme) mrg, 'd des_vars_scheme) urel"
-  assumes "P is H1" "Q is H1" "M is HDM"
+  assumes "P is H1" "Q is H1" "M is HDm"
   shows "(P \<parallel>\<^bsub>M\<^esub> Q) is \<^bold>H"
   by (rule Healthy_intro;
       simp add: Healthy_if H1_par_by_merge H2_par_by_merge
-        HDM_healths assms)
+        HDm_healths assms)
 
 subsubsection \<open> Miracle \<close>
 
@@ -320,12 +320,12 @@ text \<open> Design skip releases the final observation after divergence, but a 
   must still exist. \<close>
 
 definition merge_des :: "'s merge \<Rightarrow> 's des_merge" ("M\<^sub>D") where
-"merge_des j \<equiv> H3m (HDM (merge_des_raw j))"
+"merge_des j \<equiv> H3m (HDm (merge_des_raw j))"
 
-text \<open> @{const skip_d} absorbs the $H2m$ part of $HDM$, since $J ;; II_D = II_D$. \<close>
+text \<open> @{const skip_d} absorbs the $H2m$ part of $HDm$, since $J ;; II_D = II_D$. \<close>
 
 lemma merge_des_alt_def: "merge_des j = H1m (merge_des_raw j) ;; II\<^sub>D"
-  by (simp only: merge_des_def H3m_def HDM_def comp_apply H1m_H2m_commute')
+  by (simp only: merge_des_def H3m_def HDm_def comp_apply H1m_H2m_commute')
      (simp add: H2m_def seqr_assoc skip_d_absorb_J_2)
 
 subsubsection \<open> Evaluation \<close>
@@ -365,25 +365,48 @@ lemma merge_des_expand_diverge:
     \<lparr>ok\<^sub>v = ok', \<dots> = s'\<rparr> \<longleftrightarrow> (\<exists>y. merge_eval j s sL sR y)"
   using assms by (simp only: merge_des_expand; blast)
 
-subsubsection \<open> Healthiness and Symmetry \<close>
+lemma HDm_merge_des_raw_eval:
+  "merge_eval (HDm (merge_des_raw j)) x p q z \<longleftrightarrow>
+    \<not> ok\<^sub>v x \<or> (((ok\<^sub>v p \<and> ok\<^sub>v q) \<longrightarrow> ok\<^sub>v z) \<and>
+      merge_eval j (des_vars.more x) (des_vars.more p) (des_vars.more q) (des_vars.more z))"
+  by (simp add: HDm_def H1m_def H2m_def merge_des_raw_def J_def; pred_auto)
 
-lemma merge_des_is_HDM [closure]: "M\<^sub>D(j) is HDM"
+lemma merge_des_ok_eval:
+  assumes "ok\<^sub>v x \<longrightarrow> ok\<^sub>v p \<and> ok\<^sub>v q"
+  shows "merge_eval (merge_des j) x p q z \<longleftrightarrow> merge_eval (HDm (merge_des_raw j)) x p q z"
+  using assms
+  by (cases x; cases p; cases q; cases z;
+      simp add: merge_des_expand HDm_merge_des_raw_eval; blast)
+
+subsubsection \<open> Healthiness, Symmetry and Associativity \<close>
+
+lemma merge_des_is_HDm [closure]: "M\<^sub>D(j) is HDm"
   unfolding merge_des_alt_def
-  by (rule HDM_seq[OF _ N_implies_H[OF skip_d_is_H1_H3]]; simp add: Healthy_def' H1m_idem)
+  by (rule HDm_seq[OF _ N_implies_H[OF skip_d_is_H1_H3]]; simp add: Healthy_def' H1m_idem)
 
 lemma merge_des_is_H3m [closure]: "merge_des j is H3m"
   by (simp add: Healthy_def' merge_des_def H3m_idem)
 
+lemma merge_des_raw_SymMerge:
+  assumes "j is SymMerge"
+  shows "merge_des_raw j is SymMerge"
+  using assms by (simp add: Healthy_def' merge_des_raw_def fun_eq_iff; pred_auto; blast)
+
 lemma merge_des_SymMerge [closure]:
   assumes "j is SymMerge"
   shows "M\<^sub>D(j) is SymMerge"
+  using SymMerge_HDm[OF merge_des_raw_SymMerge[OF assms]]
+  by (simp add: merge_des_def H3m_def Healthy_def' seqr_assoc[symmetric])
+
+lemma HDm_merge_des_raw_AssocMerge:
+  assumes "AssocMerge j"
+  shows "AssocMerge (HDm (merge_des_raw j))"
 proof -
-  have "merge_des_raw j is SymMerge"
-    using assms by (simp add: Healthy_def' merge_des_raw_def fun_eq_iff; pred_auto; blast)
-  then have "HDM (merge_des_raw j) is SymMerge"
-    by (rule SymMerge_HDM)
-  then show ?thesis
-    by (simp add: merge_des_def H3m_def Healthy_def' seqr_assoc[symmetric])
+  have ex_des: "(\<exists>u. F u) = (\<exists>b s. F \<lparr>ok\<^sub>v = b, \<dots> = s\<rparr>)" for F :: "'a des_vars_ext \<Rightarrow> bool"
+    by (metis (full_types) des_vars.surjective)
+  show ?thesis
+    using assms unfolding AssocMerge_cyclic_eval
+    by (simp add: ex_des HDm_merge_des_raw_eval ex_bool_eq; blast)
 qed
 
 subsection \<open> Design Parallel \<close>
@@ -419,7 +442,7 @@ subsubsection \<open> Healthiness Closure \<close>
 lemma des_par_H_closure [closure]:
   assumes "P is H1" "Q is H1"
   shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) is \<^bold>H"
-  by (rule H_par_by_merge[OF assms merge_des_is_HDM])
+  by (rule H_par_by_merge[OF assms merge_des_is_HDm])
 
 lemma des_par_H3_closure [closure]:
   "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) is H3"
@@ -429,7 +452,7 @@ lemma des_par_N_closure [closure]:
   assumes "P is H1" "Q is H1"
   shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) is \<^bold>N"
   by (simp add: Healthy_def' Healthy_if[OF des_par_H3_closure]
-      Healthy_if[OF H1_par_by_merge[OF assms HDM_healths(1)[OF merge_des_is_HDM]]])
+      Healthy_if[OF H1_par_by_merge[OF assms HDm_healths(1)[OF merge_des_is_HDm]]])
 
 subsubsection \<open> Divergence and Zero Laws \<close>
 
@@ -439,11 +462,11 @@ text \<open> A divergent branch permits every output when both branch observatio
 (* P((True,s),(okL,sL)) \<and> Q((True,s),(okR,sR)) \<and> \<not>(okL \<and> okR) \<and> j(s, sL, sR, y) \<Longrightarrow>
      (P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q)((True,s),(ok',s')) *)
 lemma des_par_diverge:
-  assumes "P (\<lparr>ok\<^sub>v = True, \<dots> = s\<rparr>, \<lparr>ok\<^sub>v = okL, \<dots> = sL\<rparr>)"
-      and "Q (\<lparr>ok\<^sub>v = True, \<dots> = s\<rparr>, \<lparr>ok\<^sub>v = okR, \<dots> = sR\<rparr>)"
-      and "\<not> (okL \<and> okR)" and "merge_eval j s sL sR y"
-  shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) (\<lparr>ok\<^sub>v = True, \<dots> = s\<rparr>, \<lparr>ok\<^sub>v = ok', \<dots> = s'\<rparr>)"
-  using assms unfolding des_par_expand by blast
+  "\<lbrakk> P (\<lparr>ok\<^sub>v = True, \<dots> = s\<rparr>, \<lparr>ok\<^sub>v = okL, \<dots> = sL\<rparr>);
+     Q (\<lparr>ok\<^sub>v = True, \<dots> = s\<rparr>, \<lparr>ok\<^sub>v = okR, \<dots> = sR\<rparr>);
+     \<not> (okL \<and> okR); merge_eval j s sL sR y \<rbrakk> \<Longrightarrow>
+    (P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) (\<lparr>ok\<^sub>v = True, \<dots> = s\<rparr>, \<lparr>ok\<^sub>v = ok', \<dots> = s'\<rparr>)"
+  unfolding des_par_expand by blast
 
 lemma des_par_chaos_chaos:
   fixes j :: "'s merge"
@@ -472,7 +495,7 @@ lemma des_par_miracle:
   assumes "P is H1"
   shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> \<top>\<^sub>D) = \<top>\<^sub>D" 
         "(\<top>\<^sub>D \<parallel>\<^sub>D\<^bsub>j\<^esub> P) = \<top>\<^sub>D"
-  by (rule par_by_merge_miracle[OF assms HDM_healths(1)[OF merge_des_is_HDM]])+
+  by (rule par_by_merge_miracle[OF assms HDm_healths(1)[OF merge_des_is_HDm]])+
 
 subsubsection \<open> Commutativity \<close>
 
@@ -483,15 +506,15 @@ lemma des_par_comm:
 
 subsubsection \<open> Associativity \<close>
 
-lemma des_par_assoc_state:
+lemma des_par_assoc:
   fixes P Q R :: "'s des_hrel" and j :: "'s merge"
-  assumes "j is SymMerge" "AssocMerge j" and mergeable: "mergeable j"
+  assumes sym: "j is SymMerge" and am: "AssocMerge j" and mergeable: "mergeable j"
   shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) \<parallel>\<^sub>D\<^bsub>j\<^esub> R = P \<parallel>\<^sub>D\<^bsub>j\<^esub> (Q \<parallel>\<^sub>D\<^bsub>j\<^esub> R)"
 proof -
   have assoc: "(\<exists>u. merge_eval j x p q u \<and> merge_eval j x u r z) =
       (\<exists>u. merge_eval j x q r u \<and> merge_eval j x p u z)" for x p q r z
     using par_by_merge_assoc_iff[where M=j]
-      par_by_merge_assoc[OF assms(1,2)] by blast
+      par_by_merge_assoc[OF sym am] by blast
   have ex_des: "(\<exists>x. F x) = (\<exists>b s. F \<lparr>ok\<^sub>v = b, \<dots> = s\<rparr>)"
     for F :: "'s des_vars_ext \<Rightarrow> bool"
     by pred_auto
@@ -506,6 +529,54 @@ proof -
         simp add: ex_bool_eq all_bool_eq assoc mergeable conj_left_commute)
   show ?thesis
     using lifted_assoc par_by_merge_assoc_iff[where M="merge_des j"] by blast
+qed
+
+text \<open>NDD-healthy operands cannot diverge when started. Under this guard,
+  the completed merge agrees with the uncompleted merge, whose associativity
+  gives the result.\<close>
+
+lemma des_par_assoc_nondiv:
+  fixes j :: "'s merge"
+  assumes sym_j: "j is SymMerge" and am: "AssocMerge j"
+    and nondiv: "P is NDD" "Q is NDD" "R is NDD"
+  shows "(P \<parallel>\<^sub>D\<^bsub>j\<^esub> Q) \<parallel>\<^sub>D\<^bsub>j\<^esub> R = P \<parallel>\<^sub>D\<^bsub>j\<^esub> (Q \<parallel>\<^sub>D\<^bsub>j\<^esub> R)"
+proof -
+  have pre: "pre\<^sub>D P = true" "pre\<^sub>D Q = true" "pre\<^sub>D R = true"
+    using nondiv by (simp_all add: NDD_healthy_iff)
+  let ?M = "merge_des j" and ?N = "HDm (merge_des_raw j)"
+  let ?G = "\<lambda>x z. ok\<^sub>v x \<longrightarrow> ok\<^sub>v z"
+  have sym: "?N is SymMerge"
+    by (simp add: SymMerge_HDm merge_des_raw_SymMerge sym_j)
+  have assoc: "AssocMerge ?N"
+    by (rule HDm_merge_des_raw_AssocMerge[OF am])
+  have agree: "merge_eval ?M x p q z = merge_eval ?N x p q z"
+    if "?G x p" "?G x q" for x p q z
+    by (rule merge_des_ok_eval; use that in blast)
+  have closed: "?G x z"
+    if "?G x p" "?G x q" "merge_eval ?M x p q z" for x p q z
+    using that agree[OF that(1,2)] by (auto simp: HDm_merge_des_raw_eval)
+  have g: "P (x,z) \<Longrightarrow> ?G x z" "Q (x,z) \<Longrightarrow> ?G x z"
+    "R (x,z) \<Longrightarrow> ?G x z" for x z
+    using pre by (blast dest: preD_true_iff[THEN iffD1])+
+  have fold_N: "(\<exists>u. merge_eval ?N x p q u \<and> merge_eval ?N x u r z) =
+      (\<exists>u. merge_eval ?N x q r u \<and> merge_eval ?N x p u z)" for x p q r z
+    using par_by_merge_assoc_iff[where M="?N"] par_by_merge_assoc[OF sym assoc] by blast
+  show ?thesis
+  proof (rule par_by_merge_assoc_on[OF _ g])
+    fix x p q r z :: "'s des_vars_ext"
+    assume guard: "?G x p" "?G x q" "?G x r"
+    have "(\<exists>u. merge_eval ?M x p q u \<and> merge_eval ?M x u r z) =
+        (\<exists>u. merge_eval ?N x p q u \<and> merge_eval ?N x u r z)"
+      using closed[OF guard(1,2)] agree[OF _ guard(3)]
+      by (simp only: agree[OF guard(1,2), symmetric]; blast)
+    also have "... = (\<exists>u. merge_eval ?N x q r u \<and> merge_eval ?N x p u z)"
+      by (rule fold_N)
+    also have "... = (\<exists>u. merge_eval ?M x q r u \<and> merge_eval ?M x p u z)"
+      using closed[OF guard(2,3)] agree[OF guard(1)]
+      by (simp only: agree[OF guard(2,3), symmetric]; blast)
+    finally show "(\<exists>u. merge_eval ?M x p q u \<and> merge_eval ?M x u r z) =
+        (\<exists>u. merge_eval ?M x q r u \<and> merge_eval ?M x p u z)" .
+  qed
 qed
 
 end
