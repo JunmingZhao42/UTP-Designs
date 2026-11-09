@@ -7,6 +7,7 @@ theory utp_designs
     utp_des_healths
     utp_des_parallel_laws
     utp_des_parallel_lift
+    utp_des_nd
     utp_des_theory
     utp_des_tactics
     utp_des_hoare
