@@ -147,6 +147,30 @@ definition post_design :: "('\<alpha>, '\<beta>) des_rel \<Rightarrow> ('\<alpha
 
 expr_constructor post_design
 
+lemma des_vars_update_all: "r\<lparr>des_vars.more := a, ok\<^sub>v := b\<rparr> = \<lparr>ok\<^sub>v = b, \<dots> = a\<rparr>"
+  by (cases r; simp)
+
+lemma preD_eval:
+  "pre\<^sub>D P (s0, s1) = (\<not> P (\<lparr>ok\<^sub>v = True, \<dots> = s0\<rparr>, \<lparr>ok\<^sub>v = False, \<dots> = s1\<rparr>))"
+  by (simp add: pre_design_def; pred_simp; simp add: des_vars_update_all)
+
+lemma preD_true_iff:
+  "(pre\<^sub>D P = true) = (\<forall>x z. P (x,z) \<and> ok\<^sub>v x \<longrightarrow> ok\<^sub>v z)"
+proof
+  assume pre: "pre\<^sub>D P = true"
+  show "\<forall>x z. P (x,z) \<and> ok\<^sub>v x \<longrightarrow> ok\<^sub>v z"
+  proof (intro allI impI, elim conjE)
+    fix x z
+    assume "P (x,z)" "ok\<^sub>v x"
+    with fun_cong[OF pre, of "(des_vars.more x, des_vars.more z)"] show "ok\<^sub>v z"
+      by (cases x; cases z; rename_tac b0 s0 b1 s1; case_tac b1; simp add: preD_eval; pred_simp)
+  qed
+next
+  assume "\<forall>x z. P (x,z) \<and> ok\<^sub>v x \<longrightarrow> ok\<^sub>v z"
+  then show "pre\<^sub>D P = true"
+    by (pred_simp; simp add: preD_eval[unfolded pred_eq_iff] des_vars_update_all; fastforce)
+qed
+
 syntax
   "_ok_f"  :: "logic \<Rightarrow> logic" ("_\<^sup>f" [1000] 1000)
   "_ok_t"  :: "logic \<Rightarrow> logic" ("_\<^sup>t" [1000] 1000)

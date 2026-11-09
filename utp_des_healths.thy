@@ -235,6 +235,13 @@ lemma H2_split:
   shows "H2(P) = (P\<^sup>f \<or> (P\<^sup>t \<and> ok\<^sup>>))"
   by (simp add: H2_def J_split)
 
+lemma H2_merge_eval:
+  "merge_eval (H2 M) x p q z =
+    (merge_eval M x p q \<lparr>ok\<^sub>v = False, \<dots> = des_vars.more z\<rparr> \<or>
+     (des_vars.ok\<^sub>v z \<and>
+       merge_eval M x p q \<lparr>ok\<^sub>v = True, \<dots> = des_vars.more z\<rparr>))"
+  by (cases z; simp add: H2_split; pred_auto)
+
 lemma preD_H2: "pre\<^sub>D (H2 P) = pre\<^sub>D P"
   by (simp add: H2_split pre_design_def, pred_simp)
 
