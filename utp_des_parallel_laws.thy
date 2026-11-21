@@ -58,7 +58,7 @@ lemma HDm_Monotonic [closure]: "Monotonic HDm"
   unfolding HDm_def
   by (rule monoI, simp add: monoD[OF H1m_Monotonic] monoD[OF H2m_Monotonic])
 
-lemma HDm_fixed_iff:
+lemma HDm_healthy_iff:
   "M is HDm \<longleftrightarrow> (M is H1m) \<and> (M is H2m)"
   using H1m_Idempotent[unfolded Idempotent_def, rule_format, of "H2m M"] H1m_H2m_commute'[of "H2m M"]
   by (auto simp add: Healthy_def' HDm_def H2m_Idempotent[unfolded Idempotent_def])
@@ -66,12 +66,12 @@ lemma HDm_fixed_iff:
 lemma HDm_healths [closure]:
   assumes "M is HDm"
   shows "M is H1m" "M is H2m"
-  using assms by (simp_all add: HDm_fixed_iff)
+  using assms by (simp_all add: HDm_healthy_iff)
 
 lemma HDm_intro:
   assumes "M is H1m" "M is H2m"
   shows "M is HDm"
-  by (simp add: HDm_fixed_iff assms)
+  by (simp add: HDm_healthy_iff assms)
 
 subsubsection \<open> Commutation \<close>
 
